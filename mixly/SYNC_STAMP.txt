@@ -1,0 +1,7 @@
+﻿# Mixly console sync stamp
+# synced: 2026-10-18 12:00:28
+# note: hub copy of index.html carries an injected online-note banner, so its bytes differ from source - compare hashes below against SOURCE files
+
+index.html :    1248 B  sha256:70b253a0ff34
+style.css  :   10136 B  sha256:d16b07ee6db3
+app.js     :   55315 B  sha256:2c5dfb5cb4da
