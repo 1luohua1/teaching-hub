@@ -765,7 +765,7 @@ async function stopSvc() {
   try {
     const r = await api('/api/services/stop', {});
     if (r.notclosed && r.notclosed.length)
-      toast('未能关闭(可能权限不足)：' + r.notclosed.map(x => x.name).join('、'), 1);
+      toast('未能关闭：' + r.notclosed.map(x => x.name + (x.reason ? '[' + x.reason + ']' : '')).join('、') + ' —该服务可能由管理员/其他用户启动，请用管理员身份重跑“启动总控台.bat”后再关', 1);
     else if (r.killed && r.killed.length)
       toast('已关闭：' + r.killed.map(x => x.name).join('、'));
     else toast('没有需要关闭的服务');
@@ -774,12 +774,11 @@ async function stopSvc() {
 }
 async function stopConsole() {
   if (!confirm('退出总控台？将关闭本机全部服务并退出，页面会失去连接，下次需双击 启动总控台.bat 重开。')) return;
-  try {
-    await api('/api/services/stop', { scope: 'console' });
-    $('#svcList').innerHTML = '<li><span class="dot off"></span> 总控台已退出，页面失去连接属正常</li>';
-    $('#svcBtns').style.display = 'none';
-    toast('总控台已退出');
-  } catch (e) { toast('退出失败：' + e.message, 1); }
+  try { await api('/api/services/stop', { scope: 'console' }); }
+  catch (e) { /* 本体随即 os._exit 会截断响应，连接报错属预期，不当作失败 */ }
+  $('#svcList').innerHTML = '<li><span class="dot off"></span> 总控台已退出，页面失去连接属正常</li>';
+  $('#svcBtns').style.display = 'none';
+  toast('总控台已退出');
 }
 
 /* ---------------- 启动 ---------------- */
