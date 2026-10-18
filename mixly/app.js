@@ -761,12 +761,25 @@ async function startSvc() {
   setTimeout(refreshSvc, 1200);
 }
 async function stopSvc() {
-  if (!confirm('确定关闭本机全部服务？总控台自身也会退出，下次需双击 启动总控台.bat 重开。')) return;
+  if (!confirm('确定关闭本机辅助服务（课程预览站/抓取接收）？总控台本体将保留。')) return;
   try {
-    await api('/api/services/stop', { scope: 'all' });
-    $('#svcList').innerHTML = '<li><span class="dot off"></span> 已关闭，页面即将失去连接…</li>';
-    toast('本机服务已全部关闭');
+    const r = await api('/api/services/stop', {});
+    if (r.notclosed && r.notclosed.length)
+      toast('未能关闭(可能权限不足)：' + r.notclosed.map(x => x.name).join('、'), 1);
+    else if (r.killed && r.killed.length)
+      toast('已关闭：' + r.killed.map(x => x.name).join('、'));
+    else toast('没有需要关闭的服务');
   } catch (e) { toast('关闭失败：' + e.message, 1); }
+  setTimeout(refreshSvc, 400);
+}
+async function stopConsole() {
+  if (!confirm('退出总控台？将关闭本机全部服务并退出，页面会失去连接，下次需双击 启动总控台.bat 重开。')) return;
+  try {
+    await api('/api/services/stop', { scope: 'console' });
+    $('#svcList').innerHTML = '<li><span class="dot off"></span> 总控台已退出，页面失去连接属正常</li>';
+    $('#svcBtns').style.display = 'none';
+    toast('总控台已退出');
+  } catch (e) { toast('退出失败：' + e.message, 1); }
 }
 
 /* ---------------- 启动 ---------------- */
@@ -774,6 +787,7 @@ $('#globalSearch').onkeydown = (e) => { if (e.key === 'Enter') go('search', e.ta
 $('#reloadBtn').onclick = () => go(state.view, state.view === 'overview' ? null : state.arg);
 $('#svcStartAll').onclick = startSvc;
 $('#svcStopAll').onclick = stopSvc;
+$('#svcStopConsole').onclick = stopConsole;
 (async function boot() {
   await loadSnapshot();
   renderNav();
