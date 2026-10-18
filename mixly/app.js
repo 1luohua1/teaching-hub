@@ -4,18 +4,54 @@ const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
 const H = (o) => o == null ? '' : String(o).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const KB = (n) => n > 1048576 ? (n / 1048576).toFixed(2) + ' MB' : n > 1024 ? (n / 1024).toFixed(1) + ' KB' : n + ' B';
 
+/* ---- 在线只读快照：GitHub Pages 等静态托管没有本机 API 时兜底 ---- */
+let SNAP = null;
+const ONLINE_BY_HOST = !/^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+async function loadSnapshot() {
+  try { const r = await fetch('snapshot.json'); if (r.ok) { const j = await r.json(); if (j && j._snapshot) SNAP = j; } } catch (e) { }
+}
+function snapGet(path) {
+  if (!SNAP) return undefined;
+  const p = path.split('?')[0];
+  const base = SNAP.apis[p];
+  if (base === undefined) return undefined;
+  if (p === '/api/blocks') { /* 带关键词的检索在快照全量里现筛 */
+    const qs = new URLSearchParams(path.slice(p.length));
+    const kw = (qs.get('q') || '').toLowerCase();
+    const limit = parseInt(qs.get('limit') || '50', 10);
+    let hits = base.hits || [];
+    if (kw) hits = hits.filter(h => ((h.block || '') + ' ' + (h.desc || '') + ' ' + (h.file || '')).toLowerCase().includes(kw));
+    return { total: hits.length, hits: limit > 0 ? hits.slice(0, limit) : hits.slice() };
+  }
+  return JSON.parse(JSON.stringify(base));
+}
 async function api(path, body) {
+  if (body && (ONLINE_BY_HOST || SNAP && window.__fellBack)) throw new Error('在线版为只读预览，投喂/校验等操作请使用教室电脑上的本机版总控台');
   const opt = body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {};
-  const r = await fetch(path, opt);
-  const j = await r.json().catch(() => ({ error: '非 JSON 响应' }));
-  if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status));
-  return j;
+  try {
+    const r = await fetch(path, opt);
+    const j = await r.json().catch(() => ({ error: '非 JSON 响应' }));
+    if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
+  } catch (e) {
+    if (!body) {
+      const d = snapGet(path);
+      if (d !== undefined) { window.__fellBack = true; return d; }
+      if (window.__fellBack) throw new Error('在线快照仅含 总览/课程库/积木索引，该数据请在本机版查看');
+    }
+    throw e;
+  }
 }
 let toastT;
 function toast(msg, bad) {
   const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (bad ? ' bad' : '');
   clearTimeout(toastT); toastT = setTimeout(() => t.className = 'toast', 2600);
 }
+/* 未捕获的异步错误（如写操作被在线只读守卫拦截）兜底转成 toast，避免点了没反应 */
+window.addEventListener('unhandledrejection', (e) => {
+  const m = e.reason && (e.reason.message || String(e.reason));
+  if (m) toast(m, true);
+});
 
 /* ---------------- 极简 markdown ---------------- */
 function md(src) {
@@ -716,7 +752,8 @@ $('#globalSearch').onkeydown = (e) => { if (e.key === 'Enter') go('search', e.ta
 $('#reloadBtn').onclick = () => go(state.view, state.view === 'overview' ? null : state.arg);
 $('#svcStart').onclick = startSvc;
 (async function boot() {
+  await loadSnapshot();
   renderNav();
-  await go('console');
+  await go(ONLINE_BY_HOST && SNAP ? 'overview' : 'console');
   checkSvc(); setInterval(checkSvc, 15000);
 })();
