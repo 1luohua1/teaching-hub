@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教学总站 · 课程导航</title>
+<style>
+  :root {
+    --orange: #ff8a00;
+    --orange-deep: #ff5d5d;
+    --ink: #3d3428;
+    --ink-soft: #8a7a66;
+    --card: #fffdf8;
+    --line: #f3e3c8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    color: var(--ink);
+    background-color: #fffaf2;
+    background-image: radial-gradient(rgba(240, 166, 60, 0.10) 1.2px, transparent 1.2px);
+    background-size: 22px 22px;
+    min-height: 100vh;
+  }
+  /* ===== 页头 ===== */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 64px 24px 48px;
+    text-align: center;
+    background:
+      radial-gradient(1200px 500px at 85% -10%, rgba(255, 209, 128, 0.55), transparent 60%),
+      radial-gradient(900px 420px at -10% 110%, rgba(126, 217, 163, 0.35), transparent 55%),
+      linear-gradient(135deg, #fff7e8 0%, #ffedd1 45%, #ffe3b8 100%);
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 2px solid #ffd9a8; border-radius: 999px;
+    padding: 7px 16px; font-size: 13.5px; font-weight: 700; color: #b06a17;
+    box-shadow: 0 4px 12px rgba(255, 138, 0, 0.12);
+  }
+  .hero-tag i {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--orange); box-shadow: 0 0 0 4px rgba(255, 138, 0, 0.15);
+  }
+  .hero h1 {
+    margin: 20px 0 12px;
+    font-size: clamp(32px, 4.5vw, 50px);
+    font-weight: 800; letter-spacing: 1px;
+  }
+  .hero h1 .hl {
+    background: linear-gradient(120deg, var(--orange), var(--orange-deep));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--ink-soft); font-size: 15px; }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+    margin-top: 26px;
+  }
+  .stat {
+    background: #fff; border: 2px solid #ffe3bd; border-radius: 16px;
+    padding: 12px 22px; min-width: 108px;
+    box-shadow: 0 6px 16px rgba(214, 125, 14, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .stat:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 0 12px 22px rgba(214, 125, 14, 0.16); }
+  .stat b { display: block; font-size: 24px; color: var(--orange); }
+  .stat span { font-size: 12.5px; color: var(--ink-soft); }
+  /* ===== 入口卡片 ===== */
+  .wrap { max-width: 880px; margin: 0 auto; padding: 44px 20px 60px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    position: relative; overflow: hidden;
+    background: var(--card);
+    border: 2px solid var(--line); border-radius: 22px;
+    padding: 26px 24px 22px;
+    box-shadow: 0 8px 20px rgba(120, 80, 20, 0.06);
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--ac, var(--orange));
+    box-shadow: 0 18px 34px rgba(120, 80, 20, 0.12);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 6px;
+    background: var(--ac, var(--orange));
+  }
+  .card .logo {
+    width: 58px; height: 58px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; margin-bottom: 14px;
+    background: var(--ac-soft, #fff3e2);
+    border: 2px solid var(--ac, var(--orange));
+  }
+  .card h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .card .sub { font-size: 12.5px; color: var(--ac-deep, #b06a17); font-weight: 700; margin-bottom: 12px; }
+  .card p { font-size: 13.5px; line-height: 1.8; color: var(--ink-soft); flex: 1; }
+  .card .chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 16px; }
+  .chip {
+    font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: 999px;
+    background: var(--ac-soft, #fff3e2); color: var(--ac-deep, #b06a17);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 18px; border-radius: 14px; text-decoration: none;
+    font-size: 14.5px; font-weight: 800; color: #fff;
+    background: linear-gradient(120deg, #ff9d2e, #ff6a3d);
+    box-shadow: 0 8px 20px rgba(255, 122, 40, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 26px rgba(255, 122, 40, 0.45); }
+  .card.green { --ac: #3fae7a; --ac-deep: #2f7f5b; --ac-soft: #eaf9f1; }
+  .card.green .btn { background: linear-gradient(120deg, #4cc08c, #2f9e6b); box-shadow: 0 8px 20px rgba(47, 158, 107, 0.35); }
+  .local-note { font-size: 12px; color: #b06a17; background: #fff8ec; border-radius: 10px; padding: 8px 12px; margin-bottom: 14px; }
+  /* ===== 页脚说明 ===== */
+  footer { max-width: 880px; margin: 0 auto; padding: 0 20px 44px; }
+  .note {
+    background: #fff; border: 2px dashed rgba(240, 166, 60, 0.45); border-radius: 16px;
+    padding: 16px 20px; font-size: 12.5px; line-height: 2; color: var(--ink-soft);
+  }
+  .note b { color: #b06a17; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-tag"><i></i>教学总站 · TEACHING HUB</div>
+  <h1>我的<span class="hl">课程导航</span>总站</h1>
+  <p>图形化编程教学 · 所有课程入口，从这里出发</p>
+  <div class="hero-stats">
+    <div class="stat"><b>2</b><span>课程平台</span></div>
+    <div class="stat"><b>102</b><span>Scratch 课时</span></div>
+    <div class="stat"><b>130+</b><span>作品文件</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+
+    <section class="card" style="--ac:#ff8a00; --ac-deep:#b06a17; --ac-soft:#fff3e2;">
+      <div class="logo">🐱</div>
+      <h2>Scratch 图形化课程体系</h2>
+      <div class="sub">Scratch 3 · 五大阶段 · 102 节课</div>
+      <p>完整课程地图：入门 → 进阶 → 高级 → 算法 → 拓展。每节课带详情弹窗（作品数据仪表条、积木类别环形图）。「打开作品 / 课件 / 空白素材」按钮需在装有课程资源的电脑上使用。</p>
+      <div class="chips">
+        <span class="chip">102 课时</span>
+        <span class="chip">130+ 作品</span>
+        <span class="chip">59 节配教案</span>
+        <span class="chip">58 节配 PPT</span>
+      </div>
+      <a class="btn" href="./scratch/index.html">▶ 进入课程体系</a>
+    </section>
+
+    <section class="card green">
+      <div class="logo">🧩</div>
+      <h2>米思齐工作区 · 总控台</h2>
+      <div class="sub">Mixly · 块化编程工作区</div>
+      <div class="local-note">⚠ 本工具依赖本机「资料接收服务」，在线版仅能预览界面；日常使用请打开教室电脑上的本地版。</div>
+      <p>Mixly 图形化编程的工作区总控台：硬件编程项目的管理入口，与 Arduino 开发板、传感器套件等动手课程配合使用。</p>
+      <div class="chips">
+        <span class="chip">Mixly 3.0</span>
+        <span class="chip">硬件编程</span>
+        <span class="chip">Arduino</span>
+      </div>
+      <a class="btn" href="./mixly/index.html">▶ 打开总控台</a>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="note">
+    <b>关于本站</b>：这是教学总站的在线版（GitHub Pages），页面副本随仓库同步发布；
+    本地完整版在 <b>d:\小项目\教学总站\</b>（同一个仓库，双击 index.html 即可离线使用）。
+    Scratch 课程作品、课件与空白素材的「一键打开」功能依赖本机资源与协议，仅本地版可用。
+  </div>
+</footer>
+
+</body>
+</html>

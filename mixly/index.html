@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>米思齐工作区 · 总控台</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<aside class="side">
+  <div class="brand">
+    <div class="logo">M</div>
+    <div>
+      <b>工作区总控台</b>
+      <small id="wsPath">mixly</small>
+    </div>
+  </div>
+  <nav id="nav"></nav>
+  <div class="side-foot">
+    <div class="svc" id="svcBox">
+      <span class="dot" id="svcDot"></span> 资料接收服务 <b id="svcState">检测中</b>
+      <button class="mini" id="svcStart">启动</button>
+    </div>
+    <small>投喂流程：网页点一下 → 指令进剪贴板 → 回对话 <b>Ctrl+V</b> 发送</small>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <h2 id="viewTitle">总览</h2>
+    <div class="top-tools">
+      <input id="globalSearch" placeholder="搜积木 / 搜文件…" autocomplete="off">
+      <button id="reloadBtn" class="ghost">↻ 刷新</button>
+    </div>
+  </header>
+  <section id="view" class="view"></section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
