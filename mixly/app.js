@@ -733,27 +733,50 @@ VIEWS.console = async (v) => {
   $$('#view [data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
 };
 
-/* ---------------- 服务状态 ---------------- */
-async function startSvc() {
-  try { await api('/api/tasks/collect_server', {}); toast('已拉起 collect_server（127.0.0.1:8777）'); }
-  catch (e) { toast('启动失败：' + e.message, 1); }
-  setTimeout(checkSvc, 900);
+/* ---------------- 本地服务面板 ---------------- */
+let SVC = [];
+async function refreshSvc() {
+  if (ONLINE_BY_HOST) { showSvcOnline(); return; }
+  try { SVC = await api('/api/services'); renderSvc(); }
+  catch (e) { $('#svcList').innerHTML = '<li><span class="dot off"></span> 服务状态未知</li>'; }
 }
-async function checkSvc() {
+function renderSvc() {
+  $('#svcList').innerHTML = SVC.map(s =>
+    '<li><span class="dot ' + (s.open ? 'on' : 'off') + '"></span>' +
+    H(s.name) + ' <span class="mono">:' + s.port + '</span>' +
+    (s.hub ? ' <span class="mono" style="color:var(--fg3)">本体</span>' : '') + '</li>').join('');
+}
+function showSvcOnline() {
+  $('#svcList').innerHTML = '<li><span class="dot"></span> 在线版为只读，无法启停本机服务</li>';
+  $('#svcBtns').style.display = 'none';
+  $('#svcOpenLocal').style.display = 'inline-block';
+}
+async function startSvc() {
+  toast('正在启动本地服务…');
   try {
-    const r = await api('/api/service?port=8777');
-    $('#svcDot').className = 'dot ' + (r.open ? 'on' : 'off');
-    $('#svcState').textContent = r.open ? '运行中 :8777' : '未启动';
-  } catch (e) { $('#svcState').textContent = '未知'; }
+    const r = await api('/api/services/start', {});
+    if (r.started && r.started.length) toast('已拉起：' + r.started.join('、'));
+    else toast('服务均已在运行');
+  } catch (e) { toast('启动失败：' + e.message, 1); }
+  setTimeout(refreshSvc, 1200);
+}
+async function stopSvc() {
+  if (!confirm('确定关闭本机全部服务？总控台自身也会退出，下次需双击 启动总控台.bat 重开。')) return;
+  try {
+    await api('/api/services/stop', { scope: 'all' });
+    $('#svcList').innerHTML = '<li><span class="dot off"></span> 已关闭，页面即将失去连接…</li>';
+    toast('本机服务已全部关闭');
+  } catch (e) { toast('关闭失败：' + e.message, 1); }
 }
 
 /* ---------------- 启动 ---------------- */
 $('#globalSearch').onkeydown = (e) => { if (e.key === 'Enter') go('search', e.target.value); };
 $('#reloadBtn').onclick = () => go(state.view, state.view === 'overview' ? null : state.arg);
-$('#svcStart').onclick = startSvc;
+$('#svcStartAll').onclick = startSvc;
+$('#svcStopAll').onclick = stopSvc;
 (async function boot() {
   await loadSnapshot();
   renderNav();
   await go(ONLINE_BY_HOST && SNAP ? 'overview' : 'console');
-  checkSvc(); setInterval(checkSvc, 15000);
+  refreshSvc(); setInterval(refreshSvc, 15000);
 })();
