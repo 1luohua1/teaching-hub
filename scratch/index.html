@@ -1005,6 +1005,16 @@
     .to-top { right: 16px; bottom: 18px; }
   }
 
+  /* ============ 6.9 开源拓展板块（OSS_CSS_MARKER） ============ */
+  .oss-fold { border-top: 1px dashed rgba(45, 52, 74, 0.18); margin-top: 12px; }
+  .oss-fold summary { cursor: pointer; font-weight: 700; font-size: 13px; color: #8a6d3b; padding: 8px 0 2px; user-select: none; }
+  .oss-fold summary:hover { color: #b06a17; }
+  .oss-fold ul { list-style: none; margin: 6px 0 2px; padding: 0; }
+  .oss-fold li { font-size: 12.5px; line-height: 1.8; color: #5a5f6e; }
+  .oss-fold li b { color: #3d4254; }
+  .oss-fold .oss-file { display: inline-block; background: rgba(214, 125, 14, 0.1); border-radius: 5px; padding: 0 5px; font-family: Consolas, monospace; font-size: 11.5px; color: #9a5b10; }
+  .oss-link { font-size: 12.5px; font-weight: 700; color: #b06a17; text-decoration: none; border: 1px solid rgba(176, 106, 23, 0.35); border-radius: 999px; padding: 4px 12px; transition: all 0.2s; }
+  .oss-link:hover { background: #fff3e2; transform: translateY(-1px); }
 </style>
 </head>
 <body>
@@ -1127,6 +1137,7 @@
       <button class="tab" data-filter="s3" type="button">高级 22 课</button>
       <button class="tab" data-filter="s4" type="button">算法 16 课</button>
       <button class="tab" data-filter="s5" type="button">备用课件</button>
+      <button class="tab" data-filter="open" type="button">开源拓展</button>
     </div>
     <div class="search-box">
       <input type="search" id="searchInput" placeholder="搜索课程名称，如：贪吃蛇" aria-label="搜索课程" />
@@ -1811,6 +1822,25 @@
 
   <!-- 搜索无结果时的提示 -->
   <div class="empty-tip" id="emptyTip">没有找到相关课程，换个关键词试试吧～</div>
+    <!-- oss-section-start -->
+  <section class="stage-block" id="stage-open" data-stage="open">
+    <div class="stage-head">
+      <span class="stage-badge">开源拓展</span>
+      <h2>开源成品资源 · 可直接打开的完整工程</h2>
+      <span class="stage-sub">收录标准：含 .sb2/.sb3 成品且成体系 · 现收录 1 个资源 · 12 个成品工程</span>
+      <p class="stage-note">成品工程已归档在仓库「开源资源库」文件夹，用 Scratch 3.0 直接打开；卡片内链接直达官方源</p>
+    </div>
+    <div class="card-grid">
+      <article class="lesson-card" data-stage="open" data-no="01" data-name="Code Club 中文课程 树莓派基金会 官方 Raspberry Pi 成品工程 sb2 可直接打开 树莓派基金会 Code Club 官方课程中文版：每项目含中文分步教程、全套步骤截图与可直接打开的成品 .sb2 工程。成品即「完整小作品」范例，适合课堂演示成品→拆解逆向→学生跟做，难度对应 1、2 阶段。全套已归档至本仓库 开源资源库\CodeClub中文课程_官方仓库\zh-CN\。" data-desc="树莓派基金会 Code Club 官方课程中文版：每项目含中文分步教程、全套步骤截图与可直接打开的成品 .sb2 工程。成品即「完整小作品」范例，适合课堂演示成品→拆解逆向→学生跟做，难度对应 1、2 阶段。全套已归档至本仓库 开源资源库\CodeClub中文课程_官方仓库\zh-CN\。">
+        <div class="card-top"><span class="lesson-no">01</span><span class="diff-tag"><span class="stars">✦</span>官方成品</span></div>
+        <h3 class="lesson-name">Code Club 中文课程</h3>
+        <p class="lesson-desc">树莓派基金会 Code Club 官方课程中文版：每项目含中文分步教程、全套步骤截图与可直接打开的成品 .sb2 工程。成品即「完整小作品」范例，适合课堂演示成品→拆解逆向→学生跟做，难度对应 1、2 阶段。全套已归档至本仓库 开源资源库\CodeClub中文课程_官方仓库\zh-CN\。</p>
+<details class="oss-fold" open><summary>Term 1 · 入门向 · 6 个项目</summary><ul><li><b>摇滚乐队</b> — 成品 <span class="oss-file">RockBand.sb2</span> · 声音、造型切换、事件</li><li><b>太空迷航</b> — 成品 <span class="oss-file">LostInSpace.sb2</span> · 循环、随机、广播</li><li><b>抓幽灵</b> — 成品 <span class="oss-file">Ghostbusters.sb2</span> · 计分变量、鼠标跟随</li><li><b>赛船</b> — 成品 <span class="oss-file">BoatRace.sb2</span> · 颜色碰撞检测、条件、关卡</li><li><b>画板</b> — 成品 <span class="oss-file">PaintBox.sb2</span> · 画笔、广播、按钮交互</li><li><b>聊天机器人</b> — 成品 <span class="oss-file">ChatBot.sb2</span> · 问答、变量、条件判断</li></ul></details><details class="oss-fold"><summary>Term 2 · 进阶向 · 6 个项目</summary><ul><li><b>记忆翻牌</b> — 成品 <span class="oss-file">Memory.sb2</span> · 列表、计时、造型匹配</li><li><b>躲避球</b> — 成品 <span class="oss-file">Dodgeball.sb2</span> · 生命值、克隆、难度递增</li><li><b>接彩点</b> — 成品 <span class="oss-file">CatchTheDots.sb2</span> · 多角色协同、颜色匹配</li><li><b>克隆大战</b> — 成品 <span class="oss-file">CloneWars.sb2</span> · 克隆、广播、综合游戏</li><li><b>益智问答</b> — 成品 <span class="oss-file">BrainGame.sb2</span> · 多选题逻辑、计分</li><li><b>创建你的世界</b> — 成品 <span class="oss-file">CreateYourOwnWorld.sb2</span> · 背景切换、地图移动、开放式</li></ul></details>
+        <div class="card-foot"><span class="lesson-meta">CC BY-NC-SA 4.0 · 课堂教学（非商业）可用，需署名来源</span><a class="oss-link" href="https://github.com/RaspberryPiFoundation/scratch-curriculum/tree/master/zh-CN" target="_blank" rel="noopener">GitHub 仓库 ↗</a></div>
+      </article>
+    </div>
+  </section>
+  <!-- oss-section-end -->
 </main>
 
 <!-- ==================== 底部说明 ==================== -->
