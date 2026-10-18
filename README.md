@@ -27,8 +27,8 @@
 ## 同步更新（总站侧自己的页面）
 
 ```powershell
-Copy-Item "d:\小项目\scrach\Scratch\00_最终交付\scratch课程体系预览.html" "d:\小项目\教学总站\scratch\index.html" -Force
-Set-Location "d:\小项目\教学总站"
+Copy-Item "d:\小项目\合作实验区\项目一\Scratch\00_最终交付\scratch课程体系预览.html" "d:\小项目\合作实验区\项目一\教学总站\scratch\index.html" -Force
+Set-Location "d:\小项目\合作实验区\项目一\教学总站"
 git pull --rebase origin main; git add -A; git -c user.name=1luohua1 -c user.email=1luohua1@users.noreply.github.com commit -m "sync scratch page"; git push
 ```
 
