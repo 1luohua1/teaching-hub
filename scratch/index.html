@@ -710,6 +710,7 @@
 
 
 
+
   /* ============ 6.1 详情弹窗内容（v2 新增） ============ */
   .modal-body .m-list {
     list-style: none;
@@ -984,6 +985,7 @@
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
   }
+
   /* ============ 7. 响应式适配 ============ */
   @media (max-width: 960px) {
     .hero-grid { grid-template-columns: 1fr; }
@@ -1002,6 +1004,71 @@
     .toolbar-inner { gap: 10px; }
     .to-top { right: 16px; bottom: 18px; }
   }
+
+  /* ============ 6.9 开源拓展板块 ============ */
+  .diff-tag.oss-tag { background: #fff3e2; color: #b06a12; }
+  .oss-use {
+    margin-top: 10px;
+    font-size: 12.8px;
+    line-height: 1.7;
+    color: #55606b;
+    background: #f8fbf6;
+    border-left: 3px solid var(--accent, #57c08a);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .oss-use b { color: var(--accent-deep, #2f7f5b); }
+  .oss-fold {
+    margin-top: 9px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fffdf8;
+    overflow: hidden;
+  }
+  .oss-fold summary {
+    cursor: pointer;
+    padding: 9px 12px;
+    font-size: 13.4px;
+    font-weight: 700;
+    color: #8a5a18;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    user-select: none;
+  }
+  .oss-fold summary::-webkit-details-marker { display: none; }
+  .oss-fold summary::before { content: "\25B8"; font-size: 12px; transition: transform .18s ease; }
+  .oss-fold[open] summary::before { transform: rotate(90deg); }
+  .oss-fold summary:hover { background: #fff7ea; }
+  .oss-fold .oss-list { list-style: none; margin: 0; padding: 2px 12px 11px; display: grid; gap: 6px; }
+  .oss-fold .oss-list li { position: relative; padding-left: 15px; font-size: 13px; line-height: 1.68; color: var(--ink); }
+  .oss-fold .oss-list li::before {
+    content: "";
+    position: absolute;
+    left: 3px; top: 9px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #f0a63c;
+  }
+  .oss-fold .oss-list a { color: #1d6fb8; text-decoration: none; font-weight: 700; }
+  .oss-fold .oss-list a:hover { text-decoration: underline; }
+  .oss-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .oss-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.6px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    background: #eaf4ff;
+    color: #1d6fb8;
+    border: 1px solid #cfe6fb;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .oss-links a:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(29, 111, 184, .18); }
 </style>
 </head>
 <body>
@@ -1124,6 +1191,7 @@
       <button class="tab" data-filter="s3" type="button">高级 22 课</button>
       <button class="tab" data-filter="s4" type="button">算法 16 课</button>
       <button class="tab" data-filter="s5" type="button">备用课件</button>
+      <button class="tab" data-filter="open" type="button">开源拓展</button>
     </div>
     <div class="search-box">
       <input type="search" id="searchInput" placeholder="搜索课程名称，如：贪吃蛇" aria-label="搜索课程" />
@@ -1808,6 +1876,45 @@
 
   <!-- 搜索无结果时的提示 -->
   <div class="empty-tip" id="emptyTip">没有找到相关课程，换个关键词试试吧～</div>
+  <!-- oss-section-start -->
+  <section class="stage-block" id="stage-open" data-stage="open">
+    <div class="stage-head">
+      <span class="stage-badge">拓展</span>
+      <h2>开源拓展 · 课程体系之外的世界级资源</h2>
+      <span class="stage-sub">3 大资源 · 全部免费开源 · 2026-10-18 精选收录</span>
+      <p class="stage-note">展开卡片内的折叠面板查看完整课程结构，链接直达官方原文；筛选与搜索同样可用</p>
+    </div>
+    <div class="card-grid">
+      <article class="lesson-card" data-stage="open" data-no="01" data-name="哈佛创意计算课程 Creative Computing Curriculum" data-desc="哈佛×MIT 联合出品的创意计算入门课程，7 大单元、活动式教学设计。强调“让学生与计算建立个人连接”——把编程当作表达创造力的媒介，与我们的项目制课程互补的是它成熟的活动设计与反思环节。">
+        <div class="card-top"><span class="lesson-no">01</span><span class="diff-tag oss-tag">哈佛 GSE</span></div>
+        <h3 class="lesson-name">哈佛创意计算课程</h3>
+        <p class="lesson-desc">哈佛×MIT 联合出品的创意计算入门课程，7 大单元、活动式教学设计。强调“让学生与计算建立个人连接”——把编程当作表达创造力的媒介，与我们的项目制课程互补的是它成熟的活动设计与反思环节。</p>
+        <div class="oss-use"><b>怎么用在我们课程里：</b>备课参考：每单元的活动（10 Blocks 限定挑战、Debug It! 找茬、Critique Group 作品互评）可直接搬进我们的课堂环节；Design Journal 设计日志适合全程贯穿。</div>
+<details class="oss-fold"><summary>课程结构 · 7 大单元</summary><ul class="oss-list"><li><b>Unit 0 起步 Getting Started</b>：认识 Scratch、注册账号、设计日志、Scratch Surprise 自由探索、工作室收藏、作品互评（Critique Group）</li><li><b>Unit 1 探索 Exploring</b>：不插电「人体编程舞」、官方教程跟做、10 Blocks 限定创作挑战、策展我的工作室、Debug It! 调试挑战、About Me 互动拼贴（收官项目）</li><li><b>Unit 2 动画 Animations</b>：不插电「表演脚本」体会事件与并行、Build-A-Band 组建乐队，收官项目为个人 MV</li><li><b>Unit 3 游戏 Games</b>：以游戏为主题的创作单元（活动详情见官方指南）</li><li><b>Unit 4 故事 Stories</b>：互动叙事单元，多角色多场景故事创作（详见官方指南）</li><li><b>Unit 5 音乐与艺术</b>：音乐/艺术表达单元（详见官方指南）</li><li><b>Unit 6 社区 Social</b>：面向社区与分享的收官单元（详见官方指南）</li></ul></details>
+        <div class="oss-links"><a href="https://creativecomputing.gse.harvard.edu/creative-computing-curriculum/" target="_blank" rel="noopener">↗ 官方课程页</a><a href="https://creativecomputing.gse.harvard.edu/guide/curriculum.html" target="_blank" rel="noopener">↗ 完整课程下载</a></div>
+        <div class="card-foot"><span class="lesson-meta">免费 · 12 种语言 · 全球访问超 104 万次</span></div>
+      </article>
+      <article class="lesson-card" data-stage="open" data-no="02" data-name="Getting Unstuck Getting Unstuck: 中级 Scratch 课程" data-desc="把教室重新想象成“设计工作室”的中级课程：学生按探索→创作→分享→反思四步循环，围绕一个计算概念完成自导向项目。正好填补我们“进阶→高级”之间的衔接空档，每个模块都是一个现成的专题课骨架。">
+        <div class="card-top"><span class="lesson-no">02</span><span class="diff-tag oss-tag">哈佛 GSE</span></div>
+        <h3 class="lesson-name">Getting Unstuck</h3>
+        <p class="lesson-desc">把教室重新想象成“设计工作室”的中级课程：学生按探索→创作→分享→反思四步循环，围绕一个计算概念完成自导向项目。正好填补我们“进阶→高级”之间的衔接空档，每个模块都是一个现成的专题课骨架。</p>
+        <div class="oss-use"><b>怎么用在我们课程里：</b>课程衔接：10 个模块按概念递进，可直接映射为我们 5 年级下学期~6 年级的过渡专题；每次课前 10 分钟做“当日挑战”，期末汇总成个人作品集。</div>
+<details class="oss-fold"><summary>11 个模块 · 点击直达官方原文</summary><ul class="oss-list"><li><a href="https://gettingunstuck.gse.harvard.edu/modules/orientation.html" target="_blank" rel="noopener"><b>M0 Start Here 起步</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/when-clicked.html" target="_blank" rel="noopener"><b>M1 When Clicked 当绿旗被点击</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/parallelism.html" target="_blank" rel="noopener"><b>M2 Parallelism 并行</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/key-press.html" target="_blank" rel="noopener"><b>M3 Key Press 按键事件</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/loops.html" target="_blank" rel="noopener"><b>M4 Loops 循环</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/broadcast.html" target="_blank" rel="noopener"><b>M5 Broadcast 广播消息</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/color-sensing.html" target="_blank" rel="noopener"><b>M6 Color Sensing 颜色侦测</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/random.html" target="_blank" rel="noopener"><b>M7 Random 随机数</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/ask-and-answer.html" target="_blank" rel="noopener"><b>M8 Ask and Answer 询问与回答</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/variables.html" target="_blank" rel="noopener"><b>M9 Variables 变量</b></a></li><li><a href="https://gettingunstuck.gse.harvard.edu/modules/lists.html" target="_blank" rel="noopener"><b>M10 Lists 列表</b></a></li></ul></details>
+        <div class="oss-links"><a href="https://gettingunstuck.gse.harvard.edu/" target="_blank" rel="noopener">↗ 课程主页</a><a href="https://gettingunstuck.gse.harvard.edu/modules/orientation.html" target="_blank" rel="noopener">↗ 模块总览</a></div>
+        <div class="card-foot"><span class="lesson-meta">10 模块 · 中级 · 设计工作室教学法</span></div>
+      </article>
+      <article class="lesson-card" data-stage="open" data-no="03" data-name="Code Club 项目库 Raspberry Pi Foundation Projects" data-desc="树莓派基金会的免费项目库，Scratch 按 Level 1→2→3 分三条路径，每条 6 个项目、逐步减少脚手架；另有 AI &amp; Data 专项路径（图像识别启蒙）。每个项目都有分步截图指导，是目前“拿来就能上课”完成度最高的资源。">
+        <div class="card-top"><span class="lesson-no">03</span><span class="diff-tag oss-tag">树莓派基金会</span></div>
+        <h3 class="lesson-name">Code Club 项目库</h3>
+        <p class="lesson-desc">树莓派基金会的免费项目库，Scratch 按 Level 1→2→3 分三条路径，每条 6 个项目、逐步减少脚手架；另有 AI &amp; Data 专项路径（图像识别启蒙）。每个项目都有分步截图指导，是目前“拿来就能上课”完成度最高的资源。</p>
+        <div class="oss-use"><b>怎么用在我们课程里：</b>直接上课：Level 1 路径可替换我们入门阶段的部分跟做课；AI &amp; Data 路径填补课程体系在人工智能方向的空白（需联网，用浏览器打开即可）。</div>
+<details class="oss-fold"><summary>路径结构 · 4 条学习路径</summary><ul class="oss-list"><li><b>L1 · Introduction to Scratch</b>（角色 · 脚本 · 循环）：零基础入门路径，做动画、游戏、App 和电子书，各 6 个项目逐步放手</li><li><b>L2 · More Scratch</b>（广播 · 判断 · 变量）：在入门之上引入广播消息、条件判断与变量，做应用、游戏和模拟程序</li><li><b>L3 · Further Scratch</b>（克隆 · 自制积木 · 布尔逻辑）：进阶综合路径：模拟程序、游戏、计算机生成艺术，用满 Scratch 全部工具</li><li><b>AI · AI &amp; Data 专项</b>（图像识别 · 数据启蒙）：外星语翻译、奶酪大作战、涂鸦识别器等 AI 启蒙项目，体验机器学习基本流程</li></ul></details>
+        <div class="oss-links"><a href="https://projects.raspberrypi.org/en-US/technology/scratch" target="_blank" rel="noopener">↗ Scratch 项目总览</a><a href="https://projects.raspberrypi.org/en-US/pathways/further-scratch" target="_blank" rel="noopener">↗ Further Scratch 路径</a></div>
+        <div class="card-foot"><span class="lesson-meta">3 条主路径 × 各 6 项目 + AI 专项 · 分步指导最完善</span></div>
+      </article>
+    </div>
+  </section>
+  <!-- oss-section-end -->
 </main>
 
 <!-- ==================== 底部说明 ==================== -->
