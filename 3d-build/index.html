@@ -113,7 +113,7 @@ const ALL_PAL = [...PAL_SYS, ...PAL_DUPLO];
 const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(stage.clientWidth, stage.clientHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 stage.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
@@ -153,7 +153,7 @@ const state = {
 };
 
 /* ---------- LDrawLoader ---------- */
-function mkLoader(miniColorHex){
+async function mkLoader(miniColorHex){
   const loader = new LDrawLoader();
   loader.setPartsLibraryPath('');
   loader.setFileMap(FILEMAP);
@@ -161,11 +161,18 @@ function mkLoader(miniColorHex){
     const cfg = '0 !COLOUR Main CODE 16 VALUE #'+miniColorHex+' EDGE #333333\n'
               + '0 !COLOUR Edge CODE 24 VALUE #'+miniColorHex+' EDGE #333333\n';
     const uri = 'data:text/plain;base64,' + btoa(unescape(encodeURIComponent(cfg)));
-    loader.preloadMaterials(uri);
+    await loader.preloadMaterials(uri);
   } else {
-    loader.preloadMaterials(LDCONFIG);
+    await loader.preloadMaterials(LDCONFIG);
   }
   return loader;
+}
+// 同一 loader 上的加载串行化，避免并发解析竞态
+const _q = new Map();
+function enqueue(key, fn){
+  const next = (_q.get(key) || Promise.resolve()).catch(()=>{}).then(fn);
+  _q.set(key, next);
+  return next;
 }
 function loadGroup(loader, name){
   return new Promise((res, rej)=>{
@@ -178,8 +185,9 @@ async function loadColored(defFile, hex){
   const key = defFile + '#' + hex;
   if (state.cache.has(key)) return state.cache.get(key);
   const lk = 'LD#' + hex;
-  if (!state.cache.has(lk)) state.cache.set(lk, mkLoader(hex));
-  const grp = await loadGroup(state.cache.get(lk), defFile);
+  if (!state.cache.has(lk)) state.cache.set(lk, await mkLoader(hex));
+  const grp = await enqueue(lk, ()=>loadGroup(state.cache.get(lk), defFile));
+  grp.userData._box = new THREE.Box3().setFromObject(grp);
   state.cache.set(key, grp);
   return grp;
 }
@@ -259,8 +267,9 @@ renderer.domElement.addEventListener('pointermove', async e=>{
     if (ghostObj) scene.remove(ghostObj);
     ghostObj = null; ghostKey = '';
     try {
-      const g = await loadColored(state.part.f, state.color);
-      g.traverse(o=>{ if(o.material){ o.material=o.material.clone(); o.material.transparent=true; o.material.opacity=.55; }});
+      const g = (await loadColored(state.part.f, state.color)).clone(true);
+      g.traverse(o=>{ if(o.material){ o.material=o.material.clone(); o.material.transparent=true; o.material.opacity=.55; o.material.depthWrite=false; }});
+      g.userData._box = new THREE.Box3().setFromObject(g);
       ghostObj = g; ghostKey = key; scene.add(ghostObj);
     } catch(err){ return; }
   }
@@ -268,7 +277,7 @@ renderer.domElement.addEventListener('pointermove', async e=>{
   const [w,d] = footprint(state.part, state.rot);
   const top = topAt(c.i, c.j, w, d);
   if (top < 0){ ghostObj.visible=false; return; }
-  const box = new THREE.Box3().setFromObject(ghostObj);
+  const box = ghostObj.userData._box;
   ghostObj.visible = true;
   ghostObj.position.set((c.i + w/2)*CELL - EXT, top - box.min.y, (c.j + d/2)*CELL - EXT);
 });
@@ -285,7 +294,8 @@ renderer.domElement.addEventListener('pointerdown', e=>{
     if (rec) removeBrick(rec);
     return;
   }
-  addBrick(c.i, c.j, state.part, state.rot, state.color, state.colorCode);
+  addBrick(c.i, c.j, state.part, state.rot, state.color, state.colorCode)
+    .catch(err=>toast('放置失败: ' + (err && err.message || err)));
 });
 addEventListener('keydown', e=>{
   if (e.key==='r' || e.key==='R'){ state.rot = (state.rot+1)%4; }
@@ -379,6 +389,34 @@ document.getElementById('mSave').addEventListener('click', ()=>{
   a.click();
 });
 
+/* ---------- 错误可见化 + 预热 ---------- */
+function toast(msg){
+  let t = document.getElementById('toast');
+  if (!t){
+    t = document.createElement('div'); t.id='toast';
+    t.style.cssText = 'position:absolute;left:50%;top:14px;transform:translateX(-50%);background:#b3261e;color:#fff;font-size:13px;padding:8px 16px;border-radius:10px;z-index:9;max-width:80%;white-space:pre-wrap';
+    stage.appendChild(t);
+  }
+  t.textContent = msg; t.style.display='block';
+  clearTimeout(toast._h); toast._h = setTimeout(()=>t.style.display='none', 6000);
+}
+addEventListener('error', e=>toast('运行错误: ' + e.message));
+addEventListener('unhandledrejection', e=>toast('错误: ' + (e.reason && e.reason.message || e.reason)));
+let _phv = 0;
+async function preheat(hex){
+  const v = ++_phv;
+  const ld = document.getElementById('loading');
+  ld.style.display = 'flex';
+  for (let i=0;i<ALL_PAL.length;i++){
+    if (v !== _phv) return;
+    ld.textContent = '预载零件 ' + (i+1) + '/' + ALL_PAL.length + ' …';
+    try { await loadColored(ALL_PAL[i].f, hex); }
+    catch(err){ toast('预载失败: ' + (err && err.message || err)); break; }
+  }
+  if (v === _phv) ld.style.display = 'none';
+}
+preheat(state.color);
+
 /* ---------- UI ---------- */
 const swBox = document.getElementById('swatches');
 COLORS.forEach(([code,hex,name],idx)=>{
@@ -389,6 +427,8 @@ COLORS.forEach(([code,hex,name],idx)=>{
     swBox.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));
     s.classList.add('on');
     state.color = hex; state.colorCode = code;
+    if (ghostObj){ scene.remove(ghostObj); ghostObj=null; ghostKey=''; }
+    preheat(hex);
   });
   swBox.appendChild(s);
 });
