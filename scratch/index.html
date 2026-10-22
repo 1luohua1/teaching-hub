@@ -1059,6 +1059,19 @@
   .fs-demo     { background: #eaf9f1; color: #2f7f5b; }
   .fs-question { background: #fff0f0; color: #a33a3a; font-weight: 600; }
   .fs-block    { background: #f1f6f2; color: #3d6b4f; }
+  /* 教案配图：按原文位置插图，点击看大图 */
+  .fs-img { display: block; max-width: min(560px, 96%); margin: 8px 0; border: 1px solid #e3e6ef; border-radius: 10px; background: #fff; cursor: zoom-in; }
+  /* 备课模式大弹窗：宽屏 + 大高度，替代 540px 小窗 */
+  #modalBox[data-mode="teach"] {
+    width: min(94vw, 1200px);
+    max-width: min(94vw, 1200px);
+    max-height: 90vh;
+    padding: 22px 34px 24px;
+  }
+  /* 配图放大查看器 */
+  #fsImgViewer { position: fixed; inset: 0; z-index: 10000; background: rgba(20, 24, 34, 0.8); display: none; align-items: center; justify-content: center; cursor: zoom-out; padding: 30px; }
+  #fsImgViewer.open { display: flex; }
+  #fsImgViewer img { max-width: 92vw; max-height: 92vh; border-radius: 12px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55); background: #fff; }
 </style>
 </head>
 <body>
@@ -1866,7 +1879,7 @@
 
   <!-- 搜索无结果时的提示 -->
   <div class="empty-tip" id="emptyTip">没有找到相关课程，换个关键词试试吧～</div>
-                        <!-- oss-section-start -->
+                            <!-- oss-section-start -->
   <section class="stage-block" id="stage-open" data-stage="open">
     <div class="stage-head">
       <span class="stage-badge">开源拓展</span>
