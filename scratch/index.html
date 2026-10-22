@@ -1063,12 +1063,43 @@
   .fs-block    { background: #f1f6f2; color: #3d6b4f; }
   /* 教案配图：按原文位置插图，点击看大图 */
   .fs-img { display: block; max-width: min(560px, 96%); margin: 8px 0; border: 1px solid #e3e6ef; border-radius: 10px; background: #fff; cursor: zoom-in; }
-  /* 备课模式大弹窗：宽屏 + 大高度，替代 540px 小窗 */
+  /* 全屏备课模式：配图放大到接近列宽 */
+  .modal:has(#modalBox[data-mode="teach"]) .fs-img { max-width: min(880px, 100%); margin: 10px auto; }
+  /* 备课模式全屏弹窗：铺满视口，左右留出箭头位 */
+  .modal:has(#modalBox[data-mode="teach"]) { padding: 0; background: rgba(45, 52, 74, 0.55); }
   #modalBox[data-mode="teach"] {
-    width: min(94vw, 1200px);
-    max-width: min(94vw, 1200px);
-    max-height: 90vh;
-    padding: 22px 34px 24px;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    padding: 22px 70px 26px;
+  }
+  /* 备课模式左右箭头：贴遮罩层 absolute 定位（不随内容滚动），仅在备课模式显示 */
+  .teach-nav {
+    display: none;
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    z-index: 70;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.75);
+    background: rgba(45, 52, 74, 0.55);
+    color: #fff;
+    font-size: 26px; line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .modal:has(#modalBox[data-mode="teach"]) .teach-nav { display: block; }
+  .teach-nav:hover { background: var(--accent, #ff9d2e); border-color: #fff; transform: translateY(-50%) scale(1.12); }
+  #teachPrev { left: 11px; }
+  #teachNext { right: 11px; }
+  @media (max-width: 720px) {
+    .teach-nav { width: 36px; height: 36px; font-size: 20px; }
+    #teachPrev { left: 5px; }
+    #teachNext { right: 5px; }
   }
   /* 配图放大查看器 */
   #fsImgViewer { position: fixed; inset: 0; z-index: 10000; background: rgba(20, 24, 34, 0.8); display: none; align-items: center; justify-content: center; cursor: zoom-out; padding: 30px; }
@@ -2222,6 +2253,58 @@ document.addEventListener('click', function (e) {
   btn.dataset.mode = 'teach';
   modalBox.setAttribute('data-mode', 'teach');
   modalBox.scrollTop = 0;
+});
+
+/* ---------- 备课模式：左右箭头 / 键盘 ←→ 切换课程 ---------- */
+// 课程序列 = teachData 注入顺序（与页面课程体系顺序一致，仅含有备课数据的课）
+var TEACH_ORDER = Object.keys(TEACH_INDEX);
+
+// 箭头按钮注入到遮罩层（.modal），absolute 定位不随内容滚动；幂等创建
+if (!document.getElementById('teachPrev')) {
+  [['teachPrev', '‹', 'prev', '上一课'], ['teachNext', '›', 'next', '下一课']].forEach(function (cfg) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.id = cfg[0];
+    b.className = 'teach-nav ' + cfg[2];
+    b.textContent = cfg[1];
+    b.setAttribute('aria-label', cfg[3]);
+    b.addEventListener('click', function () { teachStep(cfg[2] === 'prev' ? -1 : 1); });
+    modal.appendChild(b);
+  });
+}
+
+// 当前备课课 key 的上/下一课（循环），并整体切换弹窗状态
+function teachStep(delta) {
+  var cur = document.getElementById('mTeachBtn').dataset.idx;
+  var i = TEACH_ORDER.indexOf(cur);
+  if (i < 0) return;
+  gotoTeachLesson(TEACH_ORDER[(i + delta + TEACH_ORDER.length) % TEACH_ORDER.length]);
+}
+
+// 切到指定课：同步弹窗头部 / 详情视图 / 备课面板（返回详情时显示的是当前课）
+function gotoTeachLesson(key) {
+  var t = TEACH_INDEX[key];
+  if (!t) return;
+  var d = LESSON_INDEX[key];
+  var stage = key.slice(0, 2);
+  document.getElementById('mNo').textContent = ('0' + key.slice(3)).slice(-2);
+  document.getElementById('mName').textContent = t.name || key;
+  document.getElementById('mStage').textContent = STAGE_TEXT[stage] || '';
+  document.getElementById('mDesc').textContent = (d && d.story) ? d.story : '';
+  if (d) mDetail.innerHTML = renderDetail(d);
+  document.getElementById('mTeach').innerHTML = renderTeachPanel(t);
+  var teachBtn = document.getElementById('mTeachBtn');
+  teachBtn.dataset.idx = key;
+  modalBox.dataset.stage = stage;
+  modalBox.scrollTop = 0;
+}
+
+// 键盘 ← → 翻课（仅备课模式全屏时生效；图片放大优先处理）
+document.addEventListener('keydown', function (e) {
+  if (fsViewer && fsViewer.classList.contains('open')) return;
+  if (!modal.classList.contains('open') || !modalBox.hasAttribute('data-mode')) return;
+  if (e.key === 'ArrowLeft') { teachStep(-1); }
+  if (e.key === 'ArrowRight') { teachStep(1); }
 });
 
 function esc(s) {
