@@ -204,8 +204,9 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:16px 0}
   .side .brand b,.side .brand small,nav a span.txt,nav a .badge{display:none}
   .side-foot{padding:8px 4px}
   .side-foot small{display:none}
-  .side-foot .svc{display:none}
-  .svc-openlocal{font-size:0;padding:7px 12px;line-height:1;text-align:center}
+  .svc{margin-bottom:0;text-align:center}
+  .svc-head,.svc-list,.svc-btns{display:none}
+  .svc-openlocal{font-size:0;padding:7px 12px;line-height:1;display:inline-block}
   .svc-openlocal::before{content:"\25B6";font-size:15px}
   .brand{justify-content:center;padding:14px 0}
   nav a{justify-content:center}
