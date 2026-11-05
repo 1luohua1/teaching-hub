@@ -711,6 +711,7 @@
 
 
 
+
   /* ============ 6.1 详情弹窗内容（v2 新增） ============ */
   .modal-body .m-list {
     list-style: none;
@@ -813,6 +814,17 @@
     background: #e3f1ff;
     border-color: #5aa2dd;
     color: #1d5480;
+  }
+  /* 「打包素材」按钮：绿色系，表示导出资源包 */
+  .modal-body .m-open.m-pack {
+    background: #eef8f1;
+    border-color: #8fcaa8;
+    color: #2f7a4f;
+  }
+  .modal-body .m-open.m-pack:hover {
+    background: #e2f3e8;
+    border-color: #6bb88a;
+    color: #226039;
   }
 
   /* ==================== 美化层：活泼 Scratch 风（2026-10） ==================== */
@@ -985,7 +997,6 @@
     0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
   }
-
   /* ============ 7. 响应式适配 ============ */
   @media (max-width: 960px) {
     .hero-grid { grid-template-columns: 1fr; }
@@ -2375,6 +2386,15 @@ function renderDetail(d) {
       '</div>';
   }
 
+  // 打包素材：把主作品里的背景与角色素材导出到桌面「课程素材包」
+  if (d.file) {
+    html += '<div class="m-open-row">' +
+      '<button type="button" class="m-open m-pack" data-idx="' + esc(d.stage + '-' + d.no) + '">' +
+      '▣ 打包本节课素材（背景 / 角色）</button>' +
+      '<div class="m-open-others">导出到桌面「课程素材包\\' + esc(d.name) + '\\」，背景与角色分开存放</div>' +
+      '</div>';
+  }
+
   // 好玩的：作品数据仪表条 + 积木类别环形图（有作品数据才显示）
   if (d.blockCount) {
     var stats = [
@@ -2577,6 +2597,27 @@ document.addEventListener('click', function (e) {
   if (!btn) return;
   var d = LESSON_INDEX[btn.dataset.idx];
   if (d && d.blankAbs) launchScratch(d.blankAbs);
+});
+
+// 打包素材：走 packasset: 协议，由 launch_scratch.ps1 调用 pack_assets.py 导出
+var launchToastDefault = null;
+function launchPack(path) {
+  if (!path) return;
+  if (launchToastDefault === null) launchToastDefault = launchToast.textContent;
+  launchToast.textContent = '素材打包中…完成后会自动打开桌面「课程素材包」文件夹。若没反应，请先运行 _构建脚本/注册协议处理器.ps1 注册 packasset: 协议。';
+  window.location.href = 'packasset:' + encodeURIComponent(path);
+  watchLaunch();
+  setTimeout(function () {
+    if (launchToastDefault !== null) launchToast.textContent = launchToastDefault;
+  }, 12000);
+}
+
+document.addEventListener('click', function (e) {
+  var btn = e.target.closest('.m-pack');
+  if (!btn) return;
+  var d = LESSON_INDEX[btn.dataset.idx];
+  if (!d) return;
+  launchPack(resolveProjectPath(d.openRel, d.openAbs));
 });
 
 // 事件委托：开源拓展弹窗里的「打开成品」按钮，同样走 scratch3: 协议打开归档的 .sb2 成品
