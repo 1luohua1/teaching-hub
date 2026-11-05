@@ -2829,7 +2829,7 @@ document.addEventListener('click', function (e) {
 
 // 弹窗里的「用 Scratch 打开本节课作品」/ 同目录其他作品文件
 document.addEventListener('click', function (e) {
-  var btn = e.target.closest('.m-open, .m-open-other');
+  var btn = e.target.closest('.m-open:not(.m-ppt):not(.m-blank):not(.m-pack), .m-open-other');
   if (!btn) return;
   var d = LESSON_INDEX[btn.dataset.idx];
   if (!d) return;
