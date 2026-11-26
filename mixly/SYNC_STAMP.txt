@@ -1,6 +1,6 @@
 # mixly console sync stamp (mixly-side publish)
-time=2026-11-24 15:29:19
+time=2026-11-26 13:00:20
 index.html	3151B	BC09205226C9
 style.css	10755B	1D793436A052
 app.js	59271B	473EC838256A
-snapshot.json	80672B	1984CDFE26E8
+snapshot.json	80672B	92B8CA331D48
